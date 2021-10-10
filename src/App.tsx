@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import TimestampPanel from './TimestampPanel';
 
 type AppProps = {}
 type AppState = {}
@@ -7,12 +8,13 @@ type AppState = {}
 class App extends React.Component<AppProps, AppState>{
   constructor(props: AppProps){
     super(props);
-    this.state = {}
+    this.state = {};
   }
 
   render(){
     return (
-      <div className="App">
+      <div className="App container-xxl">
+        <TimestampPanel />
       </div>
     );
   }
