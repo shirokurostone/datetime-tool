@@ -2,12 +2,44 @@ import React from 'react';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ReactComponent as ClipboardIcon } from 'bootstrap-icons/icons/clipboard.svg';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(customParseFormat);
 
 type FormatType = 'default'|'unixtime'|'YYYYMMDD'|'YYYY-MM-DD'|'HH:mm:ss'|'RFC2822'|'ISO8601';
+
+function parse(value : string, isUtc : boolean): dayjs.Dayjs{
+  let patterns = [
+    {
+      description: 'unixtime',
+      regexp: /^\d{9,10}$/,
+      format: 'X',
+    },
+    {
+      description: 'unixtime (ms)',
+      regexp: /^\d{12,13}$/,
+      format: 'x',
+    },
+  ];
+
+  for (const p of patterns){
+    const match = p.regexp.exec(value);
+    if (match){
+      if (isUtc){
+        return dayjs.utc(value, p.format);
+      }
+      return dayjs(value, p.format);
+    }
+  }
+
+  if (isUtc){
+    return dayjs.utc(value);
+  }
+  return dayjs(value);
+}
 
 function format(time: dayjs.Dayjs, type: FormatType): string{
   switch (type){
@@ -111,13 +143,7 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps,Timestamp
   }
 
   parse(timezone: string, timestamp: string) : dayjs.Dayjs | null{
-    let time;
-    if (timezone === "utc"){
-      time = dayjs.utc(timestamp)
-    } else {
-      time = dayjs(timestamp)
-    }
-
+    const time = parse(timestamp, timezone === "utc");
     if (time.format() === "Invalid Date") {
       return null;
     }
