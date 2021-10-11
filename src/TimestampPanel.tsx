@@ -239,11 +239,16 @@ class TimestampPanel extends React.Component<TimestampPanelProps,TimestampPanelS
 
   render(){
     return (
-      <div>
-        <TimestampInputRow onChange={this.handleChangeTime}/>
-        <div className="row">
-          <TimestampPanelColumn time={this.state.localtime} label="local"/>
-          <TimestampPanelColumn time={this.state.utctime}   label="UTC"/>
+      <div className="card">
+        <div className="card-header text-end">
+          <button type="button" className="btn-close btn-sm"></button>
+        </div>
+        <div className="card-body">
+          <TimestampInputRow onChange={this.handleChangeTime}/>
+          <div className="row">
+            <TimestampPanelColumn time={this.state.localtime} label="local"/>
+            <TimestampPanelColumn time={this.state.utctime}   label="UTC"/>
+          </div>
         </div>
       </div>
     );

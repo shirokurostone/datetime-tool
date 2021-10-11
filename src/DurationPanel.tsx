@@ -41,8 +41,10 @@ class DurationPanel extends React.Component<DurationPanelProps, DurationPanelSta
   render(){
     const duration = this.props.to.diff(this.props.from);
     return(
-      <div>
-        { this.durationString(duration) }
+      <div className="card">
+        <div className="card-body">
+          { this.durationString(duration) }
+        </div>
       </div>
     );
   }
