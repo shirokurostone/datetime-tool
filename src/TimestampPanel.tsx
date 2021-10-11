@@ -206,6 +206,8 @@ class TimestampPanelColumn extends React.Component<TimestampPanelColumnProps,Tim
 
 
 type TimestampPanelProps = {
+  onChange: (value:dayjs.Dayjs)=>void,
+  time: dayjs.Dayjs,
 }
 type TimestampPanelState = {
   localtime: dayjs.Dayjs,
@@ -216,18 +218,23 @@ class TimestampPanel extends React.Component<TimestampPanelProps,TimestampPanelS
   constructor(props: TimestampPanelProps){
     super(props);
     this.state = {
-      localtime: dayjs(),
-      utctime: dayjs.utc(),
+      localtime: this.props.time.local(),
+      utctime: this.props.time.utc(),
     }
 
     this.handleChangeTime = this.handleChangeTime.bind(this);
   }
 
   handleChangeTime(value: dayjs.Dayjs){
+    this.updateTime(value);
+    this.props.onChange(value);
+  }
+
+  updateTime(value: dayjs.Dayjs){
     this.setState({
       localtime: value.local(),
       utctime: value.utc()
-    })
+    });
   }
 
   render(){
