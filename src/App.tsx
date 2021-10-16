@@ -8,8 +8,10 @@ import { ReactComponent as PlusLgIcon } from 'bootstrap-icons/icons/plus-lg.svg'
 type AppProps = {}
 type AppState = {
   timestamps: {
+    id: number,
     time: dayjs.Dayjs
   }[],
+  maxId: number,
 }
 
 class App extends React.Component<AppProps, AppState>{
@@ -17,41 +19,47 @@ class App extends React.Component<AppProps, AppState>{
     super(props);
     this.state = {
       timestamps: [
-        {time:dayjs().millisecond(0)},
-        {time:dayjs().millisecond(0)},
+        {id: 0, time:dayjs().millisecond(0)},
+        {id: 1, time:dayjs().millisecond(0)},
       ],
+      maxId: 1,
     };
     this.handleChangeTimestamp = this.handleChangeTimestamp.bind(this);
     this.handleClick = this.handleClick.bind(this);
   }
 
-  handleChangeTimestamp(value: dayjs.Dayjs, i: number){
-    this.state.timestamps[i] = {time: value};
+  handleChangeTimestamp(id: number, value: dayjs.Dayjs){
+    for (let i=0; i<this.state.timestamps.length; i++){
+      if (id === this.state.timestamps[i].id){
+        this.state.timestamps[i].time = value;
+      }
+    }
     this.setState({
       timestamps: this.state.timestamps,
     });
   }
 
-  handleRemoveTimestamp(i: number){
-    this.state.timestamps.splice(i, 1);
+  handleRemoveTimestamp(id: number){
     this.setState({
-      timestamps: this.state.timestamps,
+      timestamps: this.state.timestamps.filter(v=>v.id !== id),
     });
   }
 
   handleClick(event: React.MouseEvent<HTMLButtonElement>){
-    this.state.timestamps.push({time: dayjs().millisecond(0)});
+    const id = this.state.maxId+1;
+    this.state.timestamps.push({id:id, time: dayjs().millisecond(0)});
     this.setState({
       timestamps: this.state.timestamps,
+      maxId: id,
     });
   }
 
   render(){
     let elements: JSX.Element[] = [];
     for (let i=0; i<this.state.timestamps.length; i++){
-      elements.push( (<TimestampPanel key={2*i} onChange={(v)=>this.handleChangeTimestamp(v,i)} onRemove={(v)=>this.handleRemoveTimestamp(i)} time={this.state.timestamps[i].time}/>) );
+      elements.push( (<TimestampPanel key={this.state.timestamps[i].id} id={this.state.timestamps[i].id} onChange={(id, value)=>this.handleChangeTimestamp(id, value)} onRemove={(id)=>this.handleRemoveTimestamp(id)} time={this.state.timestamps[i].time}/>) );
       if (i !== this.state.timestamps.length-1 ){
-        elements.push( (<DurationPanel key={2*i+1} from={this.state.timestamps[i].time} to={this.state.timestamps[i+1].time}/>) );
+        elements.push( (<DurationPanel key={this.state.timestamps[i].id+"_duration"} from={this.state.timestamps[i].time} to={this.state.timestamps[i+1].time}/>) );
       }
     }
 

@@ -206,9 +206,10 @@ class TimestampPanelColumn extends React.Component<TimestampPanelColumnProps,Tim
 
 
 type TimestampPanelProps = {
-  onChange: (value:dayjs.Dayjs)=>void,
-  onRemove: React.MouseEventHandler<HTMLButtonElement>,
+  onChange: (id:number, value:dayjs.Dayjs)=>void,
+  onRemove: (id:number)=>void,
   time: dayjs.Dayjs,
+  id: number,
 }
 type TimestampPanelState = {
   localtime: dayjs.Dayjs,
@@ -228,7 +229,7 @@ class TimestampPanel extends React.Component<TimestampPanelProps,TimestampPanelS
 
   handleChangeTime(value: dayjs.Dayjs){
     this.updateTime(value);
-    this.props.onChange(value);
+    this.props.onChange(this.props.id, value);
   }
 
   updateTime(value: dayjs.Dayjs){
@@ -242,7 +243,7 @@ class TimestampPanel extends React.Component<TimestampPanelProps,TimestampPanelS
     return (
       <div className="card">
         <div className="card-header text-end">
-          <button type="button" className="btn-close btn-sm" onClick={this.props.onRemove}></button>
+          <button type="button" className="btn-close btn-sm" onClick={(e)=>this.props.onRemove(this.props.id)}></button>
         </div>
         <div className="card-body">
           <TimestampInputRow onChange={this.handleChangeTime}/>
