@@ -1,9 +1,9 @@
-import dayjs from 'dayjs';
 import React from 'react';
+import { Timestamp, Duration } from './Timestamp'
 
 type DurationPanelProps = {
-  from: dayjs.Dayjs,
-  to: dayjs.Dayjs,
+  from: Timestamp,
+  to: Timestamp,
 }
 type DurationPanelState = {}
 class DurationPanel extends React.Component<DurationPanelProps, DurationPanelState>{
@@ -11,39 +11,12 @@ class DurationPanel extends React.Component<DurationPanelProps, DurationPanelSta
     super(props)
   }
 
-  durationString(valueMs: number): string{
-    valueMs = Math.abs(valueMs);
-    const ms = valueMs%1000;
-    const s = Math.trunc(valueMs/1000)%60;
-    const m = Math.trunc(valueMs/1000/60)%60;
-    const h = Math.trunc(valueMs/1000/60/60)%24;
-    const d = Math.trunc(valueMs/1000/60/60/24);
-
-    let result = 'P';
-    if (d !== 0){
-      result += d+"D";
-    }
-    result += "T";
-    if (h !== 0){
-      result += h+"H";
-    }
-    if (m !== 0){
-      result += m+"M";
-    }
-    if (ms !== 0){
-      result += s+"."+ms.toString().padStart(3, '0')+"S";
-    } else if (s !== 0 || valueMs === 0) {
-      result += s+"S";
-    }
-    return result;
-  }
-
   render(){
-    const duration = this.props.to.diff(this.props.from);
+    const duration = new Duration(this.props.from, this.props.to);
     return(
       <div className="card">
         <div className="card-body">
-          { this.durationString(duration) }
+          { duration.toDurationString() }
         </div>
       </div>
     );

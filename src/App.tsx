@@ -1,6 +1,6 @@
-import dayjs from 'dayjs';
 import React from 'react';
 import './App.css';
+import { Timestamp } from './Timestamp'
 import TimestampPanel from './TimestampPanel';
 import DurationPanel from './DurationPanel';
 import { ReactComponent as PlusLgIcon } from 'bootstrap-icons/icons/plus-lg.svg';
@@ -9,7 +9,7 @@ type AppProps = {}
 type AppState = {
   timestamps: {
     id: number,
-    time: dayjs.Dayjs
+    time: Timestamp,
   }[],
   maxId: number,
 }
@@ -19,8 +19,8 @@ class App extends React.Component<AppProps, AppState>{
     super(props);
     this.state = {
       timestamps: [
-        {id: 0, time:dayjs().millisecond(0)},
-        {id: 1, time:dayjs().millisecond(0)},
+        {id: 0, time:Timestamp.now()},
+        {id: 1, time:Timestamp.now()},
       ],
       maxId: 1,
     };
@@ -28,7 +28,7 @@ class App extends React.Component<AppProps, AppState>{
     this.handleClick = this.handleClick.bind(this);
   }
 
-  handleChangeTimestamp(id: number, value: dayjs.Dayjs){
+  handleChangeTimestamp(id: number, value: Timestamp){
     for (let i=0; i<this.state.timestamps.length; i++){
       if (id === this.state.timestamps[i].id){
         this.state.timestamps[i].time = value;
@@ -47,7 +47,7 @@ class App extends React.Component<AppProps, AppState>{
 
   handleClick(event: React.MouseEvent<HTMLButtonElement>){
     const id = this.state.maxId+1;
-    this.state.timestamps.push({id:id, time: dayjs().millisecond(0)});
+    this.state.timestamps.push({id:id, time: Timestamp.now()});
     this.setState({
       timestamps: this.state.timestamps,
       maxId: id,

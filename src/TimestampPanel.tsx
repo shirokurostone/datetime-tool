@@ -1,71 +1,10 @@
 import React from 'react';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ReactComponent as ClipboardIcon } from 'bootstrap-icons/icons/clipboard.svg';
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
-dayjs.extend(customParseFormat);
-
-type FormatType = 'default'|'unixtime'|'YYYYMMDD'|'YYYY-MM-DD'|'HH:mm:ss'|'RFC2822'|'ISO8601';
-
-function parse(value : string, isUtc : boolean): dayjs.Dayjs{
-  let patterns = [
-    {
-      description: 'unixtime',
-      regexp: /^\d{9,10}$/,
-      format: 'X',
-    },
-    {
-      description: 'unixtime (ms)',
-      regexp: /^\d{12,13}$/,
-      format: 'x',
-    },
-  ];
-
-  for (const p of patterns){
-    const match = p.regexp.exec(value);
-    if (match){
-      if (isUtc){
-        return dayjs.utc(value, p.format);
-      }
-      return dayjs(value, p.format);
-    }
-  }
-
-  if (isUtc){
-    return dayjs.utc(value);
-  }
-  return dayjs(value);
-}
-
-function format(time: dayjs.Dayjs, type: FormatType): string{
-  switch (type){
-    case 'default':
-      return time.format('YYYY-MM-DD HH:mm:ss.SSS');
-    case 'unixtime':
-      return ""+time.unix();
-    case 'YYYYMMDD':
-      return ""+time.format('YYYYMMDD');
-    case 'YYYY-MM-DD':
-      return ""+time.format('YYYY-MM-DD');
-    case 'HH:mm:ss':
-      return time.format('HH:mm:ss');
-    case 'RFC2822':
-      return time.format('ddd, DD MMM YYYY HH:mm:ss ZZ');
-    case 'ISO8601':
-      if (time.isUTC()){
-        return time.toISOString();
-      }
-      return time.format('YYYY-MM-DDTHH:mm:ss.SSSZ');
-  }
-}
+import { Timestamp, FormatType } from './Timestamp'
 
 type TimestampPanelRowProps = {
   label: string,
-  time: dayjs.Dayjs,
+  time: Timestamp,
   type: FormatType,
 }
 
@@ -76,7 +15,7 @@ class TimestampPanelRow extends React.Component<TimestampPanelRowProps,{}>{
   }
 
   handleClick(event : React.MouseEvent<HTMLButtonElement>){
-    let text = format(this.props.time, this.props.type);
+    let text = this.props.time.format(this.props.type);
     navigator.clipboard.writeText(text).then(()=>{}).catch((r)=>{console.log(r)});
   }
 
@@ -86,7 +25,7 @@ class TimestampPanelRow extends React.Component<TimestampPanelRowProps,{}>{
         <label className="col-3 col-form-label">{this.props.label}</label>
         <div className="col-9">
           <div className="input-group">
-            <input className="form-control" type="text" value={format(this.props.time, this.props.type)} readOnly />
+            <input className="form-control" type="text" value={this.props.time.format(this.props.type)} readOnly />
             <button className="btn btn-outline-secondary" onClick={this.handleClick}><ClipboardIcon/></button>
           </div>
         </div>
@@ -96,22 +35,22 @@ class TimestampPanelRow extends React.Component<TimestampPanelRowProps,{}>{
 }
 
 type TimestampInputRowProps = {
-  onChange: (value:dayjs.Dayjs)=>void,
+  onChange: (value:Timestamp)=>void,
 }
 type TimestampInputRowState = {
   timezone: string,
   timestamp: string,
-  time: dayjs.Dayjs | null,
+  time: Timestamp | null,
 }
 
 class TimestampInputRow extends React.Component<TimestampInputRowProps,TimestampInputRowState>{
   constructor(props: TimestampInputRowProps){
     super(props);
 
-    const defaultTime = dayjs();
+    const defaultTime = Timestamp.now();
     this.state = {
       timezone: "local",
-      timestamp: defaultTime.format(),
+      timestamp: defaultTime.format('default'),
       time: defaultTime,
     }
     this.handleChangeTimezone = this.handleChangeTimezone.bind(this);
@@ -142,9 +81,9 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps,Timestamp
     }
   }
 
-  parse(timezone: string, timestamp: string) : dayjs.Dayjs | null{
-    const time = parse(timestamp, timezone === "utc");
-    if (time.format() === "Invalid Date") {
+  parse(timezone: string, timestamp: string) : Timestamp | null{
+    const time = Timestamp.parse(timestamp, timezone === "utc");
+    if (!time.isValid()) {
       return null;
     }
     return time;
@@ -176,7 +115,7 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps,Timestamp
 }
 
 type TimestampPanelColumnProps = {
-  time: dayjs.Dayjs,
+  time: Timestamp,
   label: string,
 }
 type TimestampPanelColumnState = {}
@@ -206,14 +145,14 @@ class TimestampPanelColumn extends React.Component<TimestampPanelColumnProps,Tim
 
 
 type TimestampPanelProps = {
-  onChange: (id:number, value:dayjs.Dayjs)=>void,
+  onChange: (id:number, value:Timestamp)=>void,
   onRemove: (id:number)=>void,
-  time: dayjs.Dayjs,
+  time: Timestamp,
   id: number,
 }
 type TimestampPanelState = {
-  localtime: dayjs.Dayjs,
-  utctime: dayjs.Dayjs,
+  localtime: Timestamp,
+  utctime: Timestamp,
 }
 
 class TimestampPanel extends React.Component<TimestampPanelProps,TimestampPanelState>{
@@ -227,12 +166,12 @@ class TimestampPanel extends React.Component<TimestampPanelProps,TimestampPanelS
     this.handleChangeTime = this.handleChangeTime.bind(this);
   }
 
-  handleChangeTime(value: dayjs.Dayjs){
+  handleChangeTime(value: Timestamp){
     this.updateTime(value);
     this.props.onChange(this.props.id, value);
   }
 
-  updateTime(value: dayjs.Dayjs){
+  updateTime(value: Timestamp){
     this.setState({
       localtime: value.local(),
       utctime: value.utc()
