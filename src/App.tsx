@@ -32,6 +32,13 @@ class App extends React.Component<AppProps, AppState>{
     });
   }
 
+  handleRemoveTimestamp(i: number){
+    this.state.timestamps.splice(i, 1);
+    this.setState({
+      timestamps: this.state.timestamps,
+    });
+  }
+
   handleClick(event: React.MouseEvent<HTMLButtonElement>){
     this.state.timestamps.push({time: dayjs().millisecond(0)});
     this.setState({
@@ -42,7 +49,7 @@ class App extends React.Component<AppProps, AppState>{
   render(){
     let elements: JSX.Element[] = [];
     for (let i=0; i<this.state.timestamps.length; i++){
-      elements.push( (<TimestampPanel key={2*i} onChange={(v)=>this.handleChangeTimestamp(v,i)} time={this.state.timestamps[i].time}/>) );
+      elements.push( (<TimestampPanel key={2*i} onChange={(v)=>this.handleChangeTimestamp(v,i)} onRemove={(v)=>this.handleRemoveTimestamp(i)} time={this.state.timestamps[i].time}/>) );
       if (i !== this.state.timestamps.length-1 ){
         elements.push( (<DurationPanel key={2*i+1} from={this.state.timestamps[i].time} to={this.state.timestamps[i+1].time}/>) );
       }
