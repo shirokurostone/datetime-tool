@@ -3,6 +3,7 @@ import React from 'react';
 import './App.css';
 import TimestampPanel from './TimestampPanel';
 import DurationPanel from './DurationPanel';
+import { ReactComponent as PlusLgIcon } from 'bootstrap-icons/icons/plus-lg.svg';
 
 type AppProps = {}
 type AppState = {
@@ -21,10 +22,18 @@ class App extends React.Component<AppProps, AppState>{
       ],
     };
     this.handleChangeTimestamp = this.handleChangeTimestamp.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   handleChangeTimestamp(value: dayjs.Dayjs, i: number){
     this.state.timestamps[i] = {time: value};
+    this.setState({
+      timestamps: this.state.timestamps,
+    });
+  }
+
+  handleClick(event: React.MouseEvent<HTMLButtonElement>){
+    this.state.timestamps.push({time: dayjs().millisecond(0)});
     this.setState({
       timestamps: this.state.timestamps,
     });
@@ -42,6 +51,9 @@ class App extends React.Component<AppProps, AppState>{
     return (
       <div className="App container-xxl">
         { elements }
+        <div className="row plusbutton-card">
+          <button className="btn btn-outline-secondary col-12" onClick={this.handleClick}><PlusLgIcon/></button>
+        </div>
       </div>
     );
   }
