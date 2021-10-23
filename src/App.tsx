@@ -20,16 +20,13 @@ class App extends React.Component<AppProps, AppState>{
   constructor(props: AppProps){
     super(props);
     this.state = {
-      timestamps: [
-        {id: 0, time:Timestamp.now()},
-        {id: 1, time:Timestamp.now()},
-      ],
+      timestamps: [],
       maxId: 1,
       inputText: '',
     };
     this.handleChangeTimestamp = this.handleChangeTimestamp.bind(this);
     this.handleClick = this.handleClick.bind(this);
-    this.handleChangeInputText = this.handleChangeInputText.bind(this);
+    this.handleAddTimestamp = this.handleAddTimestamp.bind(this);
   }
 
   handleChangeTimestamp(id: number, value: Timestamp){
@@ -58,9 +55,12 @@ class App extends React.Component<AppProps, AppState>{
     });
   }
 
-  handleChangeInputText(event: React.ChangeEvent<HTMLTextAreaElement>){
+  handleAddTimestamp(text:string){
+    const id = this.state.maxId+1;
+    this.state.timestamps.push({id:id, time: Timestamp.parse(text, false)});
     this.setState({
-      inputText: event.target.value,
+      timestamps: this.state.timestamps,
+      maxId: id,
     });
   }
 
@@ -75,19 +75,7 @@ class App extends React.Component<AppProps, AppState>{
 
     return (
       <div className="App container-xxl">
-        <div className="card">
-          <div className="card-body">
-            <div className="row">
-              <textarea
-                className="form-control"
-                rows={10}
-                onChange={this.handleChangeInputText}
-                value={this.state.inputText}
-                />
-              <PreviewPanel text={this.state.inputText} />
-            </div>
-          </div>
-        </div>
+        <PreviewPanel onAddTimestamp={this.handleAddTimestamp}/>
         <div className="">
           { elements }
           <div className="row plusbutton-card">

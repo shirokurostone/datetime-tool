@@ -1,0 +1,12 @@
+
+.preview-textarea{
+  height: 400px;
+}
+
+.preview-column{
+  height: 400px;
+  overflow: scroll;
+}
+
+.preview-timestamp-node{
+}

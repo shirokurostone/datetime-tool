@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
+import './PreviewPanel.css';
 
 type TimestampNodeProps = {
-    text: string,
-  }
+　text: string,
+  onClick: (text:string)=>void,
+}
     
 function TimestampNode(props: TimestampNodeProps){
   return (
-    <span className="preview-timestamp-node bg-primary text-white">{props.text}</span>
+    <a href="#" className="preview-timestamp-node link-primary" onClick={()=>props.onClick(props.text)}>{props.text}</a>
   );
 }
 
@@ -21,7 +23,7 @@ function TextNode(props: TextNodeProps){
 }
 
 type PreviewPanelProps = {
-  text: string,
+  onAddTimestamp: (text:string)=>void,
 }
 
 type NodeInfo = {
@@ -65,16 +67,26 @@ function parse(inputs: NodeInfo[], regex: RegExp) : NodeInfo[]{
 }
 
 function PreviewPanel(props: PreviewPanelProps){
-  const regexps = [/\d{4}-\d{2}-\d{2}/, /\d{4}/];
+  const [inputText, setInputText] = useState("");
 
-  const nodes = props.text.split("\n").flatMap(s=>{
+  const regexps = [
+    /(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{1,2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} ((\+|-)\d{4}|Z)/, //RFC2822
+    /(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{1,2} \d{2}:\d{2}:\d{2} \d{4} (\+|-)\d{4}/,
+    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}(\+|-)\d{2}:?\d{2}/,
+    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\+|-)\d{2}:?\d{2}/,
+    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}/,
+    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/,
+    /\d{4}-\d{2}-\d{2}/,
+    /\d{12,13}/,
+    /\d{9,10}/,
+  ];
+
+  const nodes = inputText.split("\n").flatMap(s=>{
     let nodes:NodeInfo[] = [{text: s, type: 'text'}];
 
     for (const regexp of regexps){
       nodes = parse(nodes, regexp);
     }
-
-    console.log(nodes);
 
     let result = nodes.map(n=>{
       switch (n.type){
@@ -84,7 +96,7 @@ function PreviewPanel(props: PreviewPanelProps){
           );
         case 'timestamp':
           return (
-            <TimestampNode text={n.text}/>
+            <TimestampNode text={n.text} onClick={props.onAddTimestamp}/>
           );
       }
     });
@@ -94,8 +106,24 @@ function PreviewPanel(props: PreviewPanelProps){
   });
 
   return (
-    <div>
-      { nodes }
+    <div className="card">
+      <div className="card-body">
+        <div className="row">
+          <div className="col-6">
+          <textarea
+            className="form-control preview-textarea"
+            rows={10}
+            onChange={(e)=>{setInputText(e.target.value)}}
+            value={inputText}
+            />
+          </div>
+          <div className="col-6">
+            <div className="preview-column">
+              { nodes }
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
