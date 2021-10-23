@@ -63,12 +63,9 @@ function parse(inputs: NodeInfo[], regex: RegExp) : NodeInfo[]{
     }
     return result;
   });
-
 }
 
-function PreviewPanel(props: PreviewPanelProps){
-  const [inputText, setInputText] = useState("");
-
+function convertToNodeList(text: string): NodeInfo[][]{
   const regexps = [
     /(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{1,2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} ((\+|-)\d{4}|Z)/, //RFC2822
     /(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{1,2} \d{2}:\d{2}:\d{2} \d{4} (\+|-)\d{4}/,
@@ -81,29 +78,33 @@ function PreviewPanel(props: PreviewPanelProps){
     /\d{9,10}/,
   ];
 
-  const nodes = inputText.split("\n").flatMap(s=>{
+  return text.split("\n").map(s=>{
     let nodes:NodeInfo[] = [{text: s, type: 'text'}];
 
     for (const regexp of regexps){
       nodes = parse(nodes, regexp);
     }
 
-    let result = nodes.map(n=>{
-      switch (n.type){
-        case 'text':
-          return (
-            <TextNode text={n.text}/>
-          );
-        case 'timestamp':
-          return (
-            <TimestampNode text={n.text} onClick={props.onAddTimestamp}/>
-          );
-      }
-    });
-
-    result.push((<br/>));
-    return result;
+    return nodes;
   });
+}
+
+function PreviewPanel(props: PreviewPanelProps){
+  const [inputText, setInputText] = useState("");
+
+  let id = 0;
+  const result:JSX.Element[] = convertToNodeList(inputText).map(
+    nodes=>{
+      return nodes.map(n=>{
+        switch (n.type){
+          case 'text':
+            return (<TextNode key={id++} text={n.text}/>);
+          case 'timestamp':
+            return (<TimestampNode key={id++} text={n.text} onClick={props.onAddTimestamp}/>);
+        }
+      });
+    }
+  ).flatMap(n=>n.concat((<br key={id++}/>)));
 
   return (
     <div className="card">
@@ -119,7 +120,7 @@ function PreviewPanel(props: PreviewPanelProps){
           </div>
           <div className="col-6">
             <div className="preview-column">
-              { nodes }
+              { result }
             </div>
           </div>
         </div>
