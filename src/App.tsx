@@ -31,13 +31,15 @@ class App extends React.Component<AppProps, AppState>{
   }
 
   handleChangeTimestamp(id: number, value: Timestamp){
-    for (let i=0; i<this.state.timestamps.length; i++){
-      if (id === this.state.timestamps[i].id){
-        this.state.timestamps[i].time = value;
-      }
-    }
     this.setState({
-      timestamps: this.state.timestamps,
+      timestamps: this.state.timestamps.map((timestamp,i)=>{
+        if (id === timestamp.id){
+          const t = {...timestamp};
+          t.time = value;
+          return t;
+        }
+        return timestamp;
+      }),
     });
   }
 
