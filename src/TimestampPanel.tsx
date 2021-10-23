@@ -36,6 +36,7 @@ class TimestampPanelRow extends React.Component<TimestampPanelRowProps,{}>{
 
 type TimestampInputRowProps = {
   onChange: (value:Timestamp)=>void,
+  defaultTimestampText: string,
 }
 type TimestampInputRowState = {
   timezone: string,
@@ -50,7 +51,7 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps,Timestamp
     const defaultTime = Timestamp.now();
     this.state = {
       timezone: "local",
-      timestamp: defaultTime.format('default'),
+      timestamp: this.props.defaultTimestampText,
       time: defaultTime,
     }
     this.handleChangeTimezone = this.handleChangeTimezone.bind(this);
@@ -148,6 +149,7 @@ type TimestampPanelProps = {
   onChange: (id:number, value:Timestamp)=>void,
   onRemove: (id:number)=>void,
   time: Timestamp,
+  defaultTimestampText: string,
   id: number,
 }
 type TimestampPanelState = {
@@ -185,7 +187,7 @@ class TimestampPanel extends React.Component<TimestampPanelProps,TimestampPanelS
           <button type="button" className="btn-close btn-sm" onClick={(e)=>this.props.onRemove(this.props.id)}></button>
         </div>
         <div className="card-body">
-          <TimestampInputRow onChange={this.handleChangeTime}/>
+          <TimestampInputRow onChange={this.handleChangeTime} defaultTimestampText={this.props.defaultTimestampText}/>
           <div className="row">
             <TimestampPanelColumn time={this.state.localtime} label="local"/>
             <TimestampPanelColumn time={this.state.utctime}   label="UTC"/>

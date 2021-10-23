@@ -11,6 +11,7 @@ type AppState = {
   timestamps: {
     id: number,
     time: Timestamp,
+    defaultText: string,
   }[],
   maxId: number,
   inputText: string,
@@ -48,7 +49,8 @@ class App extends React.Component<AppProps, AppState>{
 
   handleClick(event: React.MouseEvent<HTMLButtonElement>){
     const id = this.state.maxId+1;
-    this.state.timestamps.push({id:id, time: Timestamp.now()});
+    const tm = Timestamp.now();
+    this.state.timestamps.push({id:id, time: tm, defaultText: tm.format('default')});
     this.setState({
       timestamps: this.state.timestamps,
       maxId: id,
@@ -57,7 +59,7 @@ class App extends React.Component<AppProps, AppState>{
 
   handleAddTimestamp(text:string){
     const id = this.state.maxId+1;
-    this.state.timestamps.push({id:id, time: Timestamp.parse(text, false)});
+    this.state.timestamps.push({id:id, time: Timestamp.parse(text, false), defaultText: text});
     this.setState({
       timestamps: this.state.timestamps,
       maxId: id,
@@ -67,9 +69,22 @@ class App extends React.Component<AppProps, AppState>{
   render(){
     let elements: JSX.Element[] = [];
     for (let i=0; i<this.state.timestamps.length; i++){
-      elements.push( (<TimestampPanel key={this.state.timestamps[i].id} id={this.state.timestamps[i].id} onChange={(id, value)=>this.handleChangeTimestamp(id, value)} onRemove={(id)=>this.handleRemoveTimestamp(id)} time={this.state.timestamps[i].time}/>) );
+      elements.push( (
+        <TimestampPanel
+          key={this.state.timestamps[i].id}
+          id={this.state.timestamps[i].id}
+          onChange={(id, value)=>this.handleChangeTimestamp(id, value)}
+          onRemove={(id)=>this.handleRemoveTimestamp(id)}
+          time={this.state.timestamps[i].time}
+          defaultTimestampText={this.state.timestamps[i].defaultText}/>
+      ) );
       if (i !== this.state.timestamps.length-1 ){
-        elements.push( (<DurationPanel key={this.state.timestamps[i].id+"_duration"} from={this.state.timestamps[i].time} to={this.state.timestamps[i+1].time}/>) );
+        elements.push( (
+          <DurationPanel
+            key={this.state.timestamps[i].id+"_duration"}
+            from={this.state.timestamps[i].time}
+            to={this.state.timestamps[i+1].time}/>
+        ) );
       }
     }
 
