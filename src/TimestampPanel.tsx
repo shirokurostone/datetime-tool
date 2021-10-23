@@ -8,30 +8,24 @@ type TimestampPanelRowProps = {
   type: FormatType,
 }
 
-class TimestampPanelRow extends React.Component<TimestampPanelRowProps,{}>{
-  constructor(props: TimestampPanelRowProps){
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-  }
+function TimestampPanelRow(props: TimestampPanelRowProps){
 
-  handleClick(event : React.MouseEvent<HTMLButtonElement>){
-    let text = this.props.time.format(this.props.type);
+  function handleClick(event : React.MouseEvent<HTMLButtonElement>){
+    let text = props.time.format(props.type);
     navigator.clipboard.writeText(text).then(()=>{}).catch((r)=>{console.log(r)});
   }
 
-  render(){
-    return (
-      <div className="row">
-        <label className="col-3 col-form-label">{this.props.label}</label>
-        <div className="col-9">
-          <div className="input-group">
-            <input className="form-control" type="text" value={this.props.time.format(this.props.type)} readOnly />
-            <button className="btn btn-outline-secondary" onClick={this.handleClick}><ClipboardIcon/></button>
-          </div>
+  return (
+    <div className="row">
+      <label className="col-3 col-form-label">{props.label}</label>
+      <div className="col-9">
+        <div className="input-group">
+          <input className="form-control" type="text" value={props.time.format(props.type)} readOnly />
+          <button className="btn btn-outline-secondary" onClick={handleClick}><ClipboardIcon/></button>
         </div>
-       </div>
-    );
-  }
+      </div>
+     </div>
+  );
 }
 
 type TimestampInputRowProps = {
@@ -119,31 +113,23 @@ type TimestampPanelColumnProps = {
   time: Timestamp,
   label: string,
 }
-type TimestampPanelColumnState = {}
 
-class TimestampPanelColumn extends React.Component<TimestampPanelColumnProps,TimestampPanelColumnState>{
-  constructor(props: TimestampPanelColumnProps){
-    super(props);
-  }
-
-  render(){
-    return (
-      <div className="timestamp col-6">
-        <div className="row">
-          <label className="col-sm-3"><h3>{this.props.label}</h3></label>
-        </div>
-        <TimestampPanelRow time={this.props.time} label="default" type='default' />
-        <TimestampPanelRow time={this.props.time} label="unixtime" type='unixtime' />
-        <TimestampPanelRow time={this.props.time} label="YYYYMMDD" type='YYYYMMDD' />
-        <TimestampPanelRow time={this.props.time} label="YYYY-MM-DD" type='YYYY-MM-DD' />
-        <TimestampPanelRow time={this.props.time} label="HH:mm:ss" type='HH:mm:ss' />
-        <TimestampPanelRow time={this.props.time} label="RFC2822" type='RFC2822' />        
-        <TimestampPanelRow time={this.props.time} label="ISO8601" type='ISO8601' />        
+function TimestampPanelColumn(props: TimestampPanelColumnProps){
+  return (
+    <div className="timestamp col-6">
+      <div className="row">
+        <label className="col-sm-3"><h3>{props.label}</h3></label>
       </div>
-    );
-  }
+      <TimestampPanelRow time={props.time} label="default" type='default' />
+      <TimestampPanelRow time={props.time} label="unixtime" type='unixtime' />
+      <TimestampPanelRow time={props.time} label="YYYYMMDD" type='YYYYMMDD' />
+      <TimestampPanelRow time={props.time} label="YYYY-MM-DD" type='YYYY-MM-DD' />
+      <TimestampPanelRow time={props.time} label="HH:mm:ss" type='HH:mm:ss' />
+      <TimestampPanelRow time={props.time} label="RFC2822" type='RFC2822' />
+      <TimestampPanelRow time={props.time} label="ISO8601" type='ISO8601' />
+    </div>
+  );
 }
-
 
 type TimestampPanelProps = {
   onChange: (id:number, value:Timestamp)=>void,
