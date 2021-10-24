@@ -31,7 +31,7 @@ export type NodeInfo = {
   type: 'text' | 'timestamp',
 }
 
-export function parse(inputs: NodeInfo[], regex: RegExp) : NodeInfo[]{
+export function parse(inputs: NodeInfo[], regex: RegExp|string) : NodeInfo[]{
 
   return inputs.flatMap(input=>{
     if (input.type !== 'text'){
@@ -66,24 +66,32 @@ export function parse(inputs: NodeInfo[], regex: RegExp) : NodeInfo[]{
 }
 
 export function convertToNodeList(text: string): NodeInfo[][]{
-  const regexps = [
-    /(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} GMT/,
-    /(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (\+|-)\d{4}/,
+    const monthName = '(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)';
+    const dayName = '(Mon|Tue|Wed|Thu|Fri|Sat|Sun)';
+    const timezone = '(\\+|-)\\d{2}:?\\d{2}'
 
-    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\+|-)\d{2}:\d{2}/,
-    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}(\+|-)\d{2}:\d{2}/,
-    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/,
-    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/,
+    const yyyy_mm_dd = `(\\d{4}-\\d{2}-\\d{2})`
+    const hh_mm_ss = `(\\d{2}:\\d{2}:\\d{2})`
 
-    /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}/,
-    /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/,
-    /\d{4}-\d{2}-\d{2}/,
+    const regexps = [
+    `${dayName}, \\d{2} ${monthName} \\d{4} \\d{2}:\\d{2}:\\d{2} GMT`,
+    `${dayName}, \\d{2} ${monthName} \\d{4} \\d{2}:\\d{2}:\\d{2} ${timezone}`,
+
+    `${yyyy_mm_dd}T${hh_mm_ss}${timezone}`,
+    `${yyyy_mm_dd}T${hh_mm_ss}\\.\\d{3}${timezone}`,
+    `${yyyy_mm_dd}T${hh_mm_ss}Z`,
+    `${yyyy_mm_dd}T${hh_mm_ss}\\.\\d{3}Z`,
+
+    `${yyyy_mm_dd} ${hh_mm_ss}\\.\\d{3}`,
+    `${yyyy_mm_dd} ${hh_mm_ss}`,
+    `${yyyy_mm_dd}`,
 
     /(?<!\d)\d{10}(?!\d)/,
     /(?<!\d)\d{13}(?!\d)/,
-
     /(?<!\d)\d{4}(0[0-9]|1[0-2])(0[1-9]|[12][0-9]|30|31)(\d{2})(\d{2})(\d{2})(?!\d)/,
     /(?<!\d)\d{4}(0[0-9]|1[0-2])(0[1-9]|[12][0-9]|30|31)(?!\d)/,
+
+    `\\d{2}/${monthName}/\\d{4}:${hh_mm_ss} ${timezone}`,
   ];
 
   return text.split("\n").map(s=>{

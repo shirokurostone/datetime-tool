@@ -81,6 +81,8 @@ test.each([
 
   ['20060102'], // YYYYMMDD
   ['20060102150405'], // YYYYMMDDHHMMSS
+
+  ['02/Jan/2006:15:04:05 -0700'], // Common Log Format
 ])('convertToNodeList', (input:string)=>{
   let actual = convertToNodeList(input)
   expect(actual).toEqual([timestampNodes(input)]);
