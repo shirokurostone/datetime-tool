@@ -83,5 +83,5 @@ test.each([
   ['20060102150405'], // YYYYMMDDHHMMSS
 ])('convertToNodeList', (input:string)=>{
   let actual = convertToNodeList(input)
-  expect(actual).toEqual(timestampNodes(input));
+  expect(actual).toEqual([timestampNodes(input)]);
 });
