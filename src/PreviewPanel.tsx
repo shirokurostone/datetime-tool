@@ -42,7 +42,7 @@ export function parse(inputs: NodeInfo[], regex: RegExp|string) : NodeInfo[]{
     let lastIndex = 0;
     let match;
     while ((match = re.exec(input.text)) !== null){
-      if (match.index !== 0 && lastIndex != match.index){
+      if (match.index !== 0 && lastIndex !== match.index){
         result.push({
           text: input.text.slice(lastIndex, match.index),
           type: 'text',
