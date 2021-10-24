@@ -66,30 +66,40 @@ export function parse(inputs: NodeInfo[], regex: RegExp|string) : NodeInfo[]{
 }
 
 export function convertToNodeList(text: string): NodeInfo[][]{
-    const monthName = '(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)';
-    const dayName = '(Mon|Tue|Wed|Thu|Fri|Sat|Sun)';
+    const monthName = '(?<monthName>Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)';
+    const dayName = '(?<dayName>Mon|Tue|Wed|Thu|Fri|Sat|Sun)';
     const timezone = '(\\+|-)\\d{2}:?\\d{2}'
 
-    const yyyy_mm_dd = `(\\d{4}-\\d{2}-\\d{2})`
-    const hh_mm_ss = `(\\d{2}:\\d{2}:\\d{2})`
+    const year = `(?<year>\\d{4})`
+    const month = `(?<month>0[0-9]|1[0-2])`
+    const day = `(?<day>[0-2][0-9]|30|31)`
+
+    const yyyy_mm_dd = `(${year}[-/_]${month}[-/_]${day})`
+
+    const hh = `(?<hh>[01]\\d|2[0-3])`;
+    const mm = `(?<mm>[0-5]\\d)`;
+    const ss = `(?<ss>[0-5]\\d|60)`;
+    const ms = `(?<ms>\\d{3})`;
+
+    const hh_mm_ss = `(${hh}:${mm}:${ss})`
 
     const regexps = [
-    `${dayName}, \\d{2} ${monthName} \\d{4} \\d{2}:\\d{2}:\\d{2} GMT`,
-    `${dayName}, \\d{2} ${monthName} \\d{4} \\d{2}:\\d{2}:\\d{2} ${timezone}`,
+    `${dayName}, ${day} ${monthName} ${year} ${hh_mm_ss} GMT`,
+    `${dayName}, ${day} ${monthName} ${year} ${hh_mm_ss} ${timezone}`,
+    `${dayName}, ${day} ${monthName} ${year} ${hh_mm_ss}`,
 
-    `${yyyy_mm_dd}T${hh_mm_ss}${timezone}`,
-    `${yyyy_mm_dd}T${hh_mm_ss}\\.\\d{3}${timezone}`,
-    `${yyyy_mm_dd}T${hh_mm_ss}Z`,
-    `${yyyy_mm_dd}T${hh_mm_ss}\\.\\d{3}Z`,
-
-    `${yyyy_mm_dd} ${hh_mm_ss}\\.\\d{3}`,
-    `${yyyy_mm_dd} ${hh_mm_ss}`,
+    `${yyyy_mm_dd}[ T]${hh_mm_ss}\\.${ms}${timezone}`,
+    `${yyyy_mm_dd}[ T]${hh_mm_ss}${timezone}`,
+    `${yyyy_mm_dd}[ T]${hh_mm_ss}\\.${ms}Z`,
+    `${yyyy_mm_dd}[ T]${hh_mm_ss}\\.${ms}`,
+    `${yyyy_mm_dd}[ T]${hh_mm_ss}Z`,
+    `${yyyy_mm_dd}[ T]${hh_mm_ss}`,
     `${yyyy_mm_dd}`,
 
-    /(?<!\d)\d{10}(?!\d)/,
-    /(?<!\d)\d{13}(?!\d)/,
-    /(?<!\d)\d{4}(0[0-9]|1[0-2])(0[1-9]|[12][0-9]|30|31)(\d{2})(\d{2})(\d{2})(?!\d)/,
-    /(?<!\d)\d{4}(0[0-9]|1[0-2])(0[1-9]|[12][0-9]|30|31)(?!\d)/,
+    `(?<!\\d)\\d{10}(?!\\d)`,
+    `(?<!\\d)\\d{13}(?!\\d)`,
+    `(?<!\\d)${year}${month}${day}${hh}${mm}${ss}(?!\\d)`,
+    `(?<!\\d)${year}${month}${day}(?!\\d)`,
 
     `\\d{2}/${monthName}/\\d{4}:${hh_mm_ss} ${timezone}`,
   ];
