@@ -26,12 +26,12 @@ type PreviewPanelProps = {
   onAddTimestamp: (text:string)=>void,
 }
 
-type NodeInfo = {
+export type NodeInfo = {
   text: string,
   type: 'text' | 'timestamp',
 }
 
-function parse(inputs: NodeInfo[], regex: RegExp) : NodeInfo[]{
+export function parse(inputs: NodeInfo[], regex: RegExp) : NodeInfo[]{
 
   return inputs.flatMap(input=>{
     if (input.type !== 'text'){
@@ -65,7 +65,7 @@ function parse(inputs: NodeInfo[], regex: RegExp) : NodeInfo[]{
   });
 }
 
-function convertToNodeList(text: string): NodeInfo[][]{
+export function convertToNodeList(text: string): NodeInfo[][]{
   const regexps = [
     /(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{1,2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} ((\+|-)\d{4}|Z)/, //RFC2822
     /(Mon|Tue|Wed|Thu|Fri|Sat|Sun) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{1,2} \d{2}:\d{2}:\d{2} \d{4} (\+|-)\d{4}/,
@@ -89,7 +89,7 @@ function convertToNodeList(text: string): NodeInfo[][]{
   });
 }
 
-function PreviewPanel(props: PreviewPanelProps){
+export function PreviewPanel(props: PreviewPanelProps){
   const [inputText, setInputText] = useState("");
 
   let id = 0;
