@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {NodeInfo, parse, convertToNodeList} from './Parser';
+import {Parser} from './Parser';
 import './PreviewPanel.css';
 
 type TimestampNodeProps = {
@@ -31,18 +31,19 @@ export function PreviewPanel(props: PreviewPanelProps){
   const [inputText, setInputText] = useState("");
 
   let id = 0;
-  const result:JSX.Element[] = convertToNodeList(inputText).map(
-    nodes=>{
-      return nodes.map(n=>{
-        switch (n.type){
+  const parser = new Parser(()=>new Date());
+  const result:JSX.Element[] =parser.parse(inputText).map(
+    token=>{
+        switch (token.type){
           case 'text':
-            return (<TextNode key={id++} text={n.text}/>);
+            return (<TextNode key={id++} text={token.text}/>);
           case 'timestamp':
-            return (<TimestampNode key={id++} text={n.text} onClick={props.onAddTimestamp}/>);
+            return (<TimestampNode key={id++} text={token.text} onClick={props.onAddTimestamp}/>);
+          case 'lf':
+            return (<br key={id++}/>);
         }
-      });
-    }
-  ).flatMap(n=>n.concat((<br key={id++}/>)));
+      }
+  );
 
   return (
     <div className="card">

@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs, { unix } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -34,6 +34,12 @@ export class Timestamp{
 
   static now() : Timestamp{
     return new Timestamp(dayjs().millisecond(0));
+  }
+
+  static unixtime(unixtimeMs:number):Timestamp{
+    return new Timestamp(
+      dayjs(""+unixtimeMs, 'x')
+    );
   }
 
   static parse(value : string, isUtc : boolean): Timestamp{
