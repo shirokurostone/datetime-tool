@@ -1,4 +1,4 @@
-import { parse, convertToNodeList, NodeInfo } from './PreviewPanel';
+import { parse, convertToNodeList, NodeInfo } from './Parser';
 
 function textNodes(...texts: string[]): NodeInfo[]{
   return texts.map(t=>({type: 'text', text: t}));
