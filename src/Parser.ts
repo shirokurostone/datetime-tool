@@ -18,11 +18,22 @@ export type LfToken = {
 
 export type Token = TextToken | TimestampToken | LfToken;
 
+export function isTimestampToken(token: Token): token is TimestampToken {
+  return token.text !== undefined && token.type === 'timestamp' && token.timestamp !== undefined;
+}
+
+export type DefaultTimezone = 'local' | 'utc';
+export function isDefaultTimezone(timezone:string): timezone is DefaultTimezone{
+  return timezone === 'local' || timezone === 'utc';
+}
+
 export class Parser {
 
+  private readonly defaultTimezone;
   private readonly clock;
 
-  constructor(clock: ()=>Date){
+  constructor(defaultTimezone:DefaultTimezone, clock: () => Date) {
+    this.defaultTimezone = defaultTimezone;
     this.clock = clock;
   }
 
@@ -83,10 +94,10 @@ export class Parser {
 
   generateTimestamp(groups: { [key: string]: string }): Timestamp {
 
-    let obj:{ [key: string]: number } = {};
+    let obj: { [key: string]: number } = {};
     ['year', 'month', 'date', 'hh', 'mm', 'ss', 'ms', 'unixtime', 'unixtimeMs', 'offset_hh', 'offset_mm'].filter(
       v => groups[v]
-    ).forEach(v=>{obj[v]=parseInt(groups[v], 10)});
+    ).forEach(v => { obj[v] = parseInt(groups[v], 10) });
 
     if (groups.monthName !== undefined) {
       const i = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'].indexOf(groups.monthName.toLowerCase());
@@ -102,7 +113,6 @@ export class Parser {
     } else if (obj.unixtimeMs !== undefined) {
       return Timestamp.unixtime(obj.unixtimeMs);
     } else {
-
       let iso8601 =
         (obj.year ?? now.getFullYear()).toString().padStart(4, '0')
         + '-'
@@ -123,9 +133,18 @@ export class Parser {
       let offset_mm: number;
 
       if (groups.offset === undefined) {
-        offset_sign = now.getTimezoneOffset() > 0 ? '-' : '+';
-        offset_hh = Math.floor(Math.abs(now.getTimezoneOffset() / 60));
-        offset_mm = Math.abs(now.getTimezoneOffset() % 60);
+        switch (this.defaultTimezone){
+          case 'local':
+            offset_sign = now.getTimezoneOffset() > 0 ? '-' : '+';
+            offset_hh = Math.floor(Math.abs(now.getTimezoneOffset() / 60));
+            offset_mm = Math.abs(now.getTimezoneOffset() % 60);
+            break;
+          case 'utc':
+            offset_sign = '+';
+            offset_hh = 0;
+            offset_mm = 0;
+            break;
+        }
       } else if (groups.offset === 'Z' || groups.offset === 'GMT') {
         offset_sign = '+';
         offset_hh = 0;

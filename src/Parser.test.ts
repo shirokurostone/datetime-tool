@@ -1,4 +1,4 @@
-import { Token, TextToken, TimestampToken, LfToken, Parser } from './Parser';
+import { Token, TextToken, TimestampToken, LfToken, Parser, isTimestampToken } from './Parser';
 import { Timestamp } from './Timestamp';
 
 function textToken(...texts: string[]): TextToken[] {
@@ -7,10 +7,6 @@ function textToken(...texts: string[]): TextToken[] {
 
 function timestampToken(...texts: string[]): TimestampToken[] {
   return texts.map(t => ({ type: 'timestamp', text: t, timestamp: Timestamp.parse(t, false) }));
-}
-
-function isTimestampToken(token: Token): token is TimestampToken {
-  return token.text !== undefined && token.type === 'timestamp' && token.timestamp !== undefined;
 }
 
 function lfToken(): LfToken[] {
@@ -73,7 +69,7 @@ test.each([
     ].flat(),
   ],
 ])('split : %p', (input, expected) => {
-  const parser = new Parser(() => new Date('2006-01-02T15:04:05.008-07:00'));
+  const parser = new Parser('local', () => new Date('2006-01-02T15:04:05.008-07:00'));
   let actual = parser.parse(input);
   expect(actual.length).toEqual(expected.length);
   for (let i = 0; i < actual.length; i++) {
@@ -113,7 +109,7 @@ test.each([
 
   ['02/Jan/2006:15:04:05 -0700', '2006-01-03T07:04:05.000+09:00'], // Common Log Format
 ])('parse : %p', (input, expected) => {
-  const parser = new Parser(() => new Date('2006-01-02T15:04:05.008-07:00'));
+  const parser = new Parser('local', () => new Date('2006-01-02T15:04:05.008-07:00'));
   let actual = parser.parse(input)
 
   expect(actual.length).toEqual(1);
@@ -129,34 +125,44 @@ test.each([
   [
     {},
     '2006-01-03T00:00:00.000+09:00',
+    '2006-01-03T09:00:00.000+09:00',
   ],
   [
     { unixtime: '1609426800' },
+    '2021-01-01T00:00:00.000+09:00',
     '2021-01-01T00:00:00.000+09:00',
   ],
   [
     { unixtimeMs: '1609426800123' },
     '2021-01-01T00:00:00.123+09:00',
+    '2021-01-01T00:00:00.123+09:00',
   ],
   [
     { year: '2021', month: '1', date: '2' },
     '2021-01-02T00:00:00.000+09:00',
+    '2021-01-02T09:00:00.000+09:00',
   ],
   [
     { year: '2021', month: '1', date: '2', hh: '3', mm: '4', ss: '5', ms: '6' },
     '2021-01-02T03:04:05.006+09:00',
+    '2021-01-02T12:04:05.006+09:00',
   ],
   [
     { year: '2021', monthName: 'Jan', date: '2', hh: '3', mm: '4', ss: '5' },
     '2021-01-02T03:04:05.000+09:00',
+    '2021-01-02T12:04:05.000+09:00',
   ],
   [
     { year: '2021', month: '1', date: '2', hh: '3', mm: '4', ss: '5', ms: '6', offset: '-01:30', offset_sign: '-', offset_hh: '1', offset_mm: '30' },
     '2021-01-02T13:34:05.006+09:00',
+    '2021-01-02T13:34:05.006+09:00',
   ],
-])('generateTimestamp : %p', (groups, expected) => {
-  const parser = new Parser(() => new Date('2006-01-02T15:04:05.008-07:00'));
-  let actual = parser.generateTimestamp(groups);
-  expect(actual.format('ISO8601')).toEqual(expected);
+])('generateTimestamp : %p', (groups, localExpected, utcExpected) => {
+  const localParser = new Parser('local', () => new Date('2006-01-02T15:04:05.008-07:00'));
+  const utcParser = new Parser('utc', () => new Date('2006-01-02T15:04:05.008-07:00'));
+  let localActual = localParser.generateTimestamp(groups);
+  let utcActual = utcParser.generateTimestamp(groups);
+  expect(localActual.format('ISO8601')).toEqual(localExpected);
+  expect(utcActual.format('ISO8601')).toEqual(utcExpected);
 });
 

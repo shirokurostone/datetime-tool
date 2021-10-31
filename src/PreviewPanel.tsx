@@ -33,7 +33,7 @@ export function PreviewPanel(props: PreviewPanelProps) {
   const [inputText, setInputText] = useState("");
 
   let id = 0;
-  const parser = new Parser(() => new Date());
+  const parser = new Parser('local', () => new Date());
   const result: JSX.Element[] = parser.parse(inputText).map(
     token => {
       switch (token.type) {

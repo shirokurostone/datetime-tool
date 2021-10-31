@@ -1,6 +1,7 @@
 import React from 'react';
 import { ReactComponent as ClipboardIcon } from 'bootstrap-icons/icons/clipboard.svg';
 import { Timestamp, FormatType } from './Timestamp'
+import { Token, TextToken, TimestampToken, LfToken, Parser, DefaultTimezone, isDefaultTimezone, isTimestampToken } from './Parser';
 
 type TimestampPanelRowProps = {
   label: string,
@@ -33,7 +34,7 @@ type TimestampInputRowProps = {
   defaultTimestampText: string,
 }
 type TimestampInputRowState = {
-  timezone: string,
+  timezone: DefaultTimezone,
   timestamp: string,
   time: Timestamp | null,
 }
@@ -53,7 +54,7 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps,Timestamp
   }
 
   handleChangeTimezone(event: React.ChangeEvent<HTMLSelectElement>){
-    const timezone = event.target.value;
+    let timezone = isDefaultTimezone(event.target.value) ? event.target.value : 'local';
     const time = this.parse(timezone, this.state.timestamp);
     this.setState({
       timezone: timezone,
@@ -76,12 +77,16 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps,Timestamp
     }
   }
 
-  parse(timezone: string, timestamp: string) : Timestamp | null{
-    const time = Timestamp.parse(timestamp, timezone === "utc");
-    if (!time.isValid()) {
+  parse(timezone: DefaultTimezone, timestamp: string) : Timestamp | null{
+    const parser = new Parser(timezone, ()=>new Date());
+    const tokens = parser.parse(timestamp);
+    if (tokens.length !== 1){
       return null;
     }
-    return time;
+    if (!isTimestampToken(tokens[0])){
+      return null;
+    }
+    return tokens[0].timestamp;
   }
 
   render(){
@@ -89,7 +94,7 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps,Timestamp
       <div className="row">
         <div className="col-3">
           <div className="input-group">
-            <label className="input-group-text">タイムゾーン</label>
+            <label className="input-group-text">デフォルトタイムゾーン</label>
             <select className="form-select" value={this.state.timezone} onChange={this.handleChangeTimezone}>
               <option value="local">local</option>
               <option value="utc">UTC</option>
