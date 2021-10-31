@@ -60,7 +60,7 @@ export function PreviewPanel(props: PreviewPanelProps) {
             />
           </div>
           <div className="col-6">
-            <div className="preview-column">
+            <div className="form-control preview-column">
               {result}
             </div>
           </div>
