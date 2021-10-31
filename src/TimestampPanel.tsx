@@ -1,7 +1,7 @@
 import React from 'react';
 import { ReactComponent as ClipboardIcon } from 'bootstrap-icons/icons/clipboard.svg';
 import { Timestamp, FormatType } from './Timestamp'
-import { Token, TextToken, TimestampToken, LfToken, Parser, DefaultTimezone, isDefaultTimezone, isTimestampToken } from './Parser';
+import { Parser, DefaultTimezone, isDefaultTimezone, isTimestampToken } from './Parser';
 
 type TimestampPanelRowProps = {
   label: string,
