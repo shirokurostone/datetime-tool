@@ -17,15 +17,15 @@ function TimestampPanelRow(props: TimestampPanelRowProps){
   }
 
   return (
-    <div className="row">
-      <label className="col-3 col-form-label">{props.label}</label>
-      <div className="col-9">
-        <div className="input-group">
-          <input className="form-control" type="text" value={props.time.format(props.type)} readOnly />
-          <button className="btn btn-outline-secondary" onClick={handleClick}><ClipboardIcon/></button>
-        </div>
+    <div className="row px-3">
+      <label className="col-3 col-form-label border-bottom">{props.label}</label>
+      <div className="col-8 border-bottom">
+        <input className="form-control-plaintext" type="text" value={props.time.format(props.type)} readOnly />
       </div>
-     </div>
+      <div className="col-1 border-bottom">
+        <button className="btn btn-outline-secondary" onClick={handleClick}><ClipboardIcon /></button>
+      </div>
+    </div>
   );
 }
 
@@ -91,7 +91,7 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps,Timestamp
 
   render(){
     return (
-      <div className="row">
+      <div className="row flex-grow-1">
         <div className="col-3">
           <div className="input-group">
             <label className="input-group-text">デフォルトタイムゾーン</label>
@@ -102,12 +102,12 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps,Timestamp
           </div>
         </div>
         <div className="col-9">
-        <div className="input-group">
-          <label className="input-group-text">時刻文字列</label>
-          <input
-            className={["form-control", "col-8", this.state.time !== null ? "is-valid" : "is-invalid"].join(" ")}
-            type="text" value={this.state.timestamp} onChange={this.handleChangeTimestamp} />
-        </div>
+          <div className="input-group">
+            <label className="input-group-text">時刻文字列</label>
+            <input
+              className={["form-control", "col-8", this.state.time !== null ? "is-valid" : "is-invalid"].join(" ")}
+              type="text" value={this.state.timestamp} onChange={this.handleChangeTimestamp} />
+          </div>
         </div>
       </div>
     );
@@ -121,9 +121,9 @@ type TimestampPanelColumnProps = {
 
 function TimestampPanelColumn(props: TimestampPanelColumnProps){
   return (
-    <div className="timestamp col-6">
-      <div className="row">
-        <label className="col-sm-3"><h3>{props.label}</h3></label>
+    <div className="timestamp col-6 my-3">
+      <div className="row px-3">
+        <div className="col-12 px-3 border-bottom text-center">{props.label}</div>
       </div>
       <TimestampPanelRow time={props.time} label="default" type='default' />
       <TimestampPanelRow time={props.time} label="unixtime" type='unixtime' />
@@ -173,15 +173,17 @@ class TimestampPanel extends React.Component<TimestampPanelProps,TimestampPanelS
 
   render(){
     return (
-      <div className="card">
-        <div className="card-header text-end">
-          <button type="button" className="btn-close btn-sm" onClick={(e)=>this.props.onRemove(this.props.id)}></button>
+      <div className="shadow-sm rounded bg-body border my-3">
+        <div className="p-3 d-flex flex-row justify-content-between align-items-center">
+          <TimestampInputRow onChange={this.handleChangeTime} defaultTimestampText={this.props.defaultTimestampText} />
+          <div className="text-end px-2">
+            <button type="button" className="btn-close btn-sm" onClick={(e) => this.props.onRemove(this.props.id)}></button>
+          </div>
         </div>
         <div className="card-body">
-          <TimestampInputRow onChange={this.handleChangeTime} defaultTimestampText={this.props.defaultTimestampText}/>
           <div className="row">
-            <TimestampPanelColumn time={this.state.localtime} label="local"/>
-            <TimestampPanelColumn time={this.state.utctime}   label="UTC"/>
+            <TimestampPanelColumn time={this.state.localtime} label="local" />
+            <TimestampPanelColumn time={this.state.utctime} label="UTC" />
           </div>
         </div>
       </div>

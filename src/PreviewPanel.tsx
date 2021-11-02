@@ -48,8 +48,8 @@ export function PreviewPanel(props: PreviewPanelProps) {
   );
 
   return (
-    <div className="card">
-      <div className="card-body">
+    <div className="shadow-sm rounded bg-body border">
+      <div className="p-3">
         <div className="row">
           <div className="col-6">
             <textarea
