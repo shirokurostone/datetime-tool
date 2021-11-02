@@ -6,12 +6,12 @@ type DurationPanelProps = {
   to: Timestamp,
 }
 
-function DurationPanel(props : DurationPanelProps){
+function DurationPanel(props: DurationPanelProps) {
   const duration = new Duration(props.from, props.to);
-  return(
+  return (
     <div className="shadow-sm rounded bg-body border my-3">
       <div className="card-body">
-        { duration.toDurationString() }
+        {duration.toDurationString()}
       </div>
     </div>
   );

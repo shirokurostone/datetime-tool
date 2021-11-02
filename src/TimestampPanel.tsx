@@ -9,11 +9,11 @@ type TimestampPanelRowProps = {
   type: FormatType,
 }
 
-function TimestampPanelRow(props: TimestampPanelRowProps){
+function TimestampPanelRow(props: TimestampPanelRowProps) {
 
-  function handleClick(event : React.MouseEvent<HTMLButtonElement>){
+  function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     let text = props.time.format(props.type);
-    navigator.clipboard.writeText(text).then(()=>{}).catch((r)=>{console.log(r)});
+    navigator.clipboard.writeText(text).then(() => { }).catch((r) => { console.log(r) });
   }
 
   return (
@@ -30,7 +30,7 @@ function TimestampPanelRow(props: TimestampPanelRowProps){
 }
 
 type TimestampInputRowProps = {
-  onChange: (value:Timestamp)=>void,
+  onChange: (value: Timestamp) => void,
   defaultTimestampText: string,
 }
 type TimestampInputRowState = {
@@ -39,8 +39,8 @@ type TimestampInputRowState = {
   time: Timestamp | null,
 }
 
-class TimestampInputRow extends React.Component<TimestampInputRowProps,TimestampInputRowState>{
-  constructor(props: TimestampInputRowProps){
+class TimestampInputRow extends React.Component<TimestampInputRowProps, TimestampInputRowState>{
+  constructor(props: TimestampInputRowProps) {
     super(props);
 
     const defaultTime = Timestamp.now();
@@ -53,43 +53,43 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps,Timestamp
     this.handleChangeTimestamp = this.handleChangeTimestamp.bind(this);
   }
 
-  handleChangeTimezone(event: React.ChangeEvent<HTMLSelectElement>){
+  handleChangeTimezone(event: React.ChangeEvent<HTMLSelectElement>) {
     let timezone = isDefaultTimezone(event.target.value) ? event.target.value : 'local';
     const time = this.parse(timezone, this.state.timestamp);
     this.setState({
       timezone: timezone,
       time: time,
     });
-    if (time !== null){
+    if (time !== null) {
       this.props.onChange(time);
     }
   }
 
-  handleChangeTimestamp(event: React.ChangeEvent<HTMLInputElement>){
+  handleChangeTimestamp(event: React.ChangeEvent<HTMLInputElement>) {
     const timestamp = event.target.value;
     const time = this.parse(this.state.timezone, timestamp);
     this.setState({
       timestamp: timestamp,
       time: time,
     });
-    if (time !== null){
+    if (time !== null) {
       this.props.onChange(time);
     }
   }
 
-  parse(timezone: DefaultTimezone, timestamp: string) : Timestamp | null{
-    const parser = new Parser(timezone, ()=>new Date());
+  parse(timezone: DefaultTimezone, timestamp: string): Timestamp | null {
+    const parser = new Parser(timezone, () => new Date());
     const tokens = parser.parse(timestamp);
-    if (tokens.length !== 1){
+    if (tokens.length !== 1) {
       return null;
     }
-    if (!isTimestampToken(tokens[0])){
+    if (!isTimestampToken(tokens[0])) {
       return null;
     }
     return tokens[0].timestamp;
   }
 
-  render(){
+  render() {
     return (
       <div className="row flex-grow-1">
         <div className="col-3">
@@ -119,7 +119,7 @@ type TimestampPanelColumnProps = {
   label: string,
 }
 
-function TimestampPanelColumn(props: TimestampPanelColumnProps){
+function TimestampPanelColumn(props: TimestampPanelColumnProps) {
   return (
     <div className="timestamp col-6 my-3">
       <div className="row px-3">
@@ -137,8 +137,8 @@ function TimestampPanelColumn(props: TimestampPanelColumnProps){
 }
 
 type TimestampPanelProps = {
-  onChange: (id:number, value:Timestamp)=>void,
-  onRemove: (id:number)=>void,
+  onChange: (id: number, value: Timestamp) => void,
+  onRemove: (id: number) => void,
   time: Timestamp,
   defaultTimestampText: string,
   id: number,
@@ -148,8 +148,8 @@ type TimestampPanelState = {
   utctime: Timestamp,
 }
 
-class TimestampPanel extends React.Component<TimestampPanelProps,TimestampPanelState>{
-  constructor(props: TimestampPanelProps){
+class TimestampPanel extends React.Component<TimestampPanelProps, TimestampPanelState>{
+  constructor(props: TimestampPanelProps) {
     super(props);
     this.state = {
       localtime: this.props.time.local(),
@@ -159,19 +159,19 @@ class TimestampPanel extends React.Component<TimestampPanelProps,TimestampPanelS
     this.handleChangeTime = this.handleChangeTime.bind(this);
   }
 
-  handleChangeTime(value: Timestamp){
+  handleChangeTime(value: Timestamp) {
     this.updateTime(value);
     this.props.onChange(this.props.id, value);
   }
 
-  updateTime(value: Timestamp){
+  updateTime(value: Timestamp) {
     this.setState({
       localtime: value.local(),
       utctime: value.utc()
     });
   }
 
-  render(){
+  render() {
     return (
       <div className="shadow-sm rounded bg-body border my-3">
         <div className="p-3 d-flex flex-row justify-content-between align-items-center">
