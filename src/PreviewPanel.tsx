@@ -51,7 +51,7 @@ export function PreviewPanel(props: PreviewPanelProps) {
     <div className="shadow-sm rounded bg-body border">
       <div className="p-3">
         <div className="row">
-          <div className="col-6">
+          <div className="col-md-6">
             <textarea
               className="form-control preview-textarea"
               rows={10}
@@ -59,7 +59,7 @@ export function PreviewPanel(props: PreviewPanelProps) {
               value={inputText}
             />
           </div>
-          <div className="col-6">
+          <div className="col-md-6">
             <div className="form-control preview-column">
               {result}
             </div>

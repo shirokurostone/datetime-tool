@@ -102,7 +102,7 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps, Timestam
   render() {
     return (
       <div className="row flex-grow-1">
-        <div className="col-3">
+        <div className="col-md-5">
           <div className="input-group">
             <label className="input-group-text">デフォルトタイムゾーン</label>
             <select className="form-select" value={this.state.timezone} onChange={this.handleChangeTimezone}>
@@ -111,7 +111,7 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps, Timestam
             </select>
           </div>
         </div>
-        <div className="col-9">
+        <div className="col-md-7">
           <div className="input-group">
             <label className="input-group-text">時刻文字列</label>
             <input
@@ -131,7 +131,7 @@ type TimestampPanelColumnProps = {
 
 function TimestampPanelColumn(props: TimestampPanelColumnProps) {
   return (
-    <div className="timestamp col-6 my-3">
+    <div className="timestamp col-md-6 my-3">
       <div className="row px-3">
         <div className="col-12 px-3 border-bottom text-center">{props.label}</div>
       </div>
