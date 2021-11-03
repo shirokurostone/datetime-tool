@@ -1,6 +1,7 @@
 import React from 'react';
 import { Timestamp, Duration } from './Timestamp'
 import { ReactComponent as StopwatchIcon } from 'bootstrap-icons/icons/stopwatch.svg';
+import './DurationPanel.css'
 
 type DurationPanelProps = {
   from: Timestamp,

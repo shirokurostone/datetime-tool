@@ -4,6 +4,7 @@ import { ReactComponent as CheckLgIcon } from 'bootstrap-icons/icons/check-lg.sv
 
 import { Timestamp, FormatType } from './Timestamp'
 import { Parser, DefaultTimezone, isDefaultTimezone, isTimestampToken } from './Parser';
+import './TimestampPanel.css';
 
 type TimestampPanelRowProps = {
   label: string,
@@ -27,7 +28,7 @@ function TimestampPanelRow(props: TimestampPanelRowProps) {
     <div className="row px-3">
       <label className="col-3 col-form-label border-bottom">{props.label}</label>
       <div className="col-8 border-bottom">
-        <input className="form-control-plaintext" type="text" value={props.time.format(props.type)} readOnly />
+        <input className="form-control-plaintext timestamp-panel-row-input" type="text" value={props.time.format(props.type)} readOnly />
       </div>
       <div className="col-1 border-bottom">
         {checked
@@ -115,7 +116,7 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps, Timestam
           <div className="input-group">
             <label className="input-group-text">時刻文字列</label>
             <input
-              className={["form-control", "col-8", this.state.time !== null ? "is-valid" : "is-invalid"].join(" ")}
+              className={["form-control", "col-8", "timestamp-input-row-input", this.state.time !== null ? "is-valid" : "is-invalid"].join(" ")}
               type="text" value={this.state.timestamp} onChange={this.handleChangeTimestamp} />
           </div>
         </div>

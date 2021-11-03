@@ -1,11 +1,15 @@
 
 .preview-textarea{
   height: 400px;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  monospace;
 }
 
 .preview-column{
   height: 400px;
   overflow: scroll;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  monospace;
 }
 
 .preview-timestamp-node{
