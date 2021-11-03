@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ReactComponent as ClipboardIcon } from 'bootstrap-icons/icons/clipboard.svg';
+import { ReactComponent as CheckLgIcon } from 'bootstrap-icons/icons/check-lg.svg';
+
 import { Timestamp, FormatType } from './Timestamp'
 import { Parser, DefaultTimezone, isDefaultTimezone, isTimestampToken } from './Parser';
 
@@ -11,9 +13,14 @@ type TimestampPanelRowProps = {
 
 function TimestampPanelRow(props: TimestampPanelRowProps) {
 
+  const [checked, updateChecked] = useState(false);
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     let text = props.time.format(props.type);
     navigator.clipboard.writeText(text).then(() => { }).catch((r) => { console.log(r) });
+    updateChecked(true);
+    setTimeout(() => {
+      updateChecked(false);
+    }, 3000);
   }
 
   return (
@@ -23,7 +30,10 @@ function TimestampPanelRow(props: TimestampPanelRowProps) {
         <input className="form-control-plaintext" type="text" value={props.time.format(props.type)} readOnly />
       </div>
       <div className="col-1 border-bottom">
-        <button className="btn btn-outline-secondary" onClick={handleClick}><ClipboardIcon /></button>
+        {checked
+          ? (<button className="btn btn-secondary" onClick={handleClick}><CheckLgIcon /></button>)
+          : (<button className="btn btn-outline-secondary" onClick={handleClick}><ClipboardIcon /></button>)
+        }
       </div>
     </div>
   );
