@@ -26,7 +26,7 @@ function TimestampPanelRow(props: TimestampPanelRowProps) {
 
   return (
     <div className="row px-3">
-      <label className="col-3 col-form-label border-bottom">{props.label}</label>
+      <label className="col-3 col-form-label border-bottom">{props.label === 'default' ? '' : props.label}</label>
       <div className="col-8 border-bottom">
         <input className="form-control-plaintext timestamp-panel-row-input" type="text" value={props.time.format(props.type)} readOnly />
       </div>
@@ -137,11 +137,13 @@ function TimestampPanelColumn(props: TimestampPanelColumnProps) {
         <div className="col-12 px-3 border-bottom text-center"><h6>{props.label}</h6></div>
       </div>
       <TimestampPanelRow time={props.time} label="default" type='default' />
-      <TimestampPanelRow time={props.time} label="unixtime" type='unixtime' />
-      <TimestampPanelRow time={props.time} label="YYYYMMDD" type='YYYYMMDD' />
       <TimestampPanelRow time={props.time} label="YYYY-MM-DD" type='YYYY-MM-DD' />
+      <TimestampPanelRow time={props.time} label="YYYYMMDD" type='YYYYMMDD' />
       <TimestampPanelRow time={props.time} label="HH:mm:ss" type='HH:mm:ss' />
+      <TimestampPanelRow time={props.time} label="HHmmss" type='HHmmss' />
+      <TimestampPanelRow time={props.time} label="unixtime" type='unixtime' />
       <TimestampPanelRow time={props.time} label="RFC2822" type='RFC2822' />
+      <TimestampPanelRow time={props.time} label="HTTP-date" type='HTTP-date' />
       <TimestampPanelRow time={props.time} label="ISO8601" type='ISO8601' />
     </div>
   );

@@ -3,7 +3,7 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
-export type FormatType = 'default'|'unixtime'|'YYYYMMDD'|'YYYY-MM-DD'|'HH:mm:ss'|'RFC2822'|'ISO8601';
+export type FormatType = 'default' | 'unixtime' | 'YYYYMMDD' | 'YYYY-MM-DD' | 'HH:mm:ss' | 'HHmmss' | 'RFC2822' | 'ISO8601' | 'HTTP-date';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -76,7 +76,11 @@ export class Timestamp{
   format(type: FormatType): string{
     switch (type){
       case 'default':
-        return this.time.format('YYYY-MM-DD HH:mm:ss.SSS');
+        if (this.time.millisecond() !== 0){
+          return this.time.format('YYYY-MM-DD HH:mm:ss.SSS');
+        } else {
+          return this.time.format('YYYY-MM-DD HH:mm:ss');
+        }
       case 'unixtime':
         return ""+this.time.unix();
       case 'YYYYMMDD':
@@ -85,6 +89,8 @@ export class Timestamp{
         return ""+this.time.format('YYYY-MM-DD');
       case 'HH:mm:ss':
         return this.time.format('HH:mm:ss');
+      case 'HHmmss':
+        return this.time.format('HHmmss');
       case 'RFC2822':
         return this.time.format('ddd, DD MMM YYYY HH:mm:ss ZZ');
       case 'ISO8601':
@@ -92,6 +98,8 @@ export class Timestamp{
           return this.time.toISOString();
         }
         return this.time.format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+      case 'HTTP-date':
+        return this.time.utc().format('ddd, DD MMM YYYY HH:mm:ss ') + 'GMT';
     }
   }
 }
