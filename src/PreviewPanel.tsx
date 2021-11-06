@@ -30,7 +30,8 @@ type PreviewPanelProps = {
 }
 
 export function PreviewPanel(props: PreviewPanelProps) {
-  const [inputText, setInputText] = useState("");
+  const now = Timestamp.now();
+  const [inputText, setInputText] = useState(now.format('default'));
 
   let id = 0;
   const parser = new Parser('local', () => new Date());
