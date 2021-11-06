@@ -15,7 +15,7 @@ function DurationPanel(props: DurationPanelProps) {
       <div className="row p-3 d-flex flex-row align-items-center">
         <div className="col-1"><StopwatchIcon /></div>
         <div className="col-2 d-flex flex-row">
-          <input className="form-control-plaintext" type="text" value={duration.toDurationString()} readOnly />
+          <input className="form-control-plaintext duration-panel-input" type="text" value={duration.toDurationString()} readOnly />
         </div>
       </div>
     </div>
