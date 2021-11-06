@@ -105,7 +105,7 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps, Timestam
       <div className="row flex-grow-1">
         <div className="col-md-5">
           <div className="input-group">
-            <label className="input-group-text">デフォルトタイムゾーン</label>
+            <label className="input-group-text">default timezone</label>
             <select className="form-select" value={this.state.timezone} onChange={this.handleChangeTimezone}>
               <option value="local">local</option>
               <option value="utc">UTC</option>
@@ -114,7 +114,7 @@ class TimestampInputRow extends React.Component<TimestampInputRowProps, Timestam
         </div>
         <div className="col-md-7">
           <div className="input-group">
-            <label className="input-group-text">時刻文字列</label>
+            <label className="input-group-text">timestamp</label>
             <input
               className={["form-control", "col-8", "timestamp-input-row-input", this.state.time !== null ? "is-valid" : "is-invalid"].join(" ")}
               type="text" value={this.state.timestamp} onChange={this.handleChangeTimestamp} />
@@ -134,7 +134,7 @@ function TimestampPanelColumn(props: TimestampPanelColumnProps) {
   return (
     <div className="timestamp col-md-6 my-3">
       <div className="row px-3">
-        <div className="col-12 px-3 border-bottom text-center">{props.label}</div>
+        <div className="col-12 px-3 border-bottom text-center"><h6>{props.label}</h6></div>
       </div>
       <TimestampPanelRow time={props.time} label="default" type='default' />
       <TimestampPanelRow time={props.time} label="unixtime" type='unixtime' />

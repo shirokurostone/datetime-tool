@@ -91,12 +91,21 @@ class App extends React.Component<AppProps, AppState>{
     }
 
     return (
-      <div className="App container-xxl">
-        <PreviewPanel onAddTimestamp={this.handleAddTimestamp} />
-        <div className="">
-          {elements}
-          <div className="row plusbutton-card">
-            <button className="btn btn-outline-secondary col-12" onClick={this.handleClick}><PlusLgIcon /></button>
+      <div className="App">
+        <div className="container-fluid p-0 mb-3">
+          <div className="navbar navbar-expand-lg navbar-light bg-light">
+            <div className="container-fluid">
+              <a className="navbar-brand">timestamp tool</a>
+            </div>
+          </div>
+        </div>
+        <div className="container-xxl">
+          <PreviewPanel onAddTimestamp={this.handleAddTimestamp} />
+          <div className="">
+            {elements}
+            <div className="row plusbutton-card my-3">
+              <button className="btn btn-outline-secondary col-12" onClick={this.handleClick}><PlusLgIcon /></button>
+            </div>
           </div>
         </div>
       </div>
