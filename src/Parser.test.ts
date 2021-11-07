@@ -68,7 +68,7 @@ test.each([
       textToken('d'),
     ].flat(),
   ],
-])('split : %p', (input, expected) => {
+])('split : %#', (input, expected) => {
   const parser = new Parser('local', () => new Date('2006-01-02T15:04:05.008-07:00'));
   let actual = parser.parse(input);
   expect(actual.length).toEqual(expected.length);
@@ -108,7 +108,7 @@ test.each([
   ['20060102150405', '2006-01-02T15:04:05.000+09:00'], // YYYYMMDDHHMMSS
 
   ['02/Jan/2006:15:04:05 -0700', '2006-01-03T07:04:05.000+09:00'], // Common Log Format
-])('parse : %p', (input, expected) => {
+])('parse : %#', (input, expected) => {
   const parser = new Parser('local', () => new Date('2006-01-02T15:04:05.008-07:00'));
   let actual = parser.parse(input)
 
@@ -157,7 +157,7 @@ test.each([
     '2021-01-02T13:34:05.006+09:00',
     '2021-01-02T13:34:05.006+09:00',
   ],
-])('generateTimestamp : %p', (groups, localExpected, utcExpected) => {
+])('generateTimestamp : %#', (groups, localExpected, utcExpected) => {
   const localParser = new Parser('local', () => new Date('2006-01-02T15:04:05.008-07:00'));
   const utcParser = new Parser('utc', () => new Date('2006-01-02T15:04:05.008-07:00'));
   let localActual = localParser.generateTimestamp(groups);
